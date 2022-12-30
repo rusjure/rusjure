@@ -7,4 +7,5 @@ pub enum Term {
     String(String),
     Number(i64),
     Float(f64),
+    Sequence(Vec<Term>)
 }

@@ -83,6 +83,23 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_function_def() {
+        let ast = parse(r#"(defn foo [num] (println num))"#).expect("Failed to parse");
+        assert_eq!(ast.into_iter().next().unwrap(),
+                   Expression {
+                       first: Box::new(Term::Symbol("defn".to_string())),
+                       params: vec![
+                           Term::Symbol("foo".to_string()),
+                           Term::Sequence(vec![Term::Symbol("num".to_string())]),
+                           Term::Expr(Expression {
+                               first: Box::from(Term::Symbol("println".to_string())),
+                               params: vec![Term::Symbol("num".to_string())]
+                           })
+                       ]
+                   });
+    }
+
+    #[test]
     fn test_pest_println_numbers() {
         {
             let expr = RusjureParser::parse(Rule::Program, r#"(println 123)"#).expect("Failed to parse")
