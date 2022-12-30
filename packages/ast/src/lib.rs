@@ -1,3 +1,5 @@
+#![forbid(unsafe)]
+
 mod expr;
 mod term;
 
