@@ -25,6 +25,9 @@ fn parse_number(pair: Pair) -> Term {
         Rule::HexNum => Term::Number(i64::from_str_radix(inner.as_str()
                                                              .trim_start_matches("0x"), 16)
             .expect("Number should be already valid")),
+        Rule::BinNum => Term::Number(i64::from_str_radix(inner.as_str()
+                                                             .trim_start_matches("0b"), 2)
+            .expect("Number should be already valid")),
         Rule::FloatNum => Term::Float(inner.as_str().parse().expect("Number should be already valid")),
         num => unreachable!("All possible inners of term should be listed. Encountered: {:?}", num)
     }

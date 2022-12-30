@@ -61,6 +61,13 @@ mod tests {
             first: Box::new(Term::Symbol("-".to_string())),
             params: vec![Term::Float(3.14), Term::Float(-0.5), Term::Float(0.5), Term::Float(-15.0), Term::Float(15.025)]
         });
+
+        let ast = parse(r#"(println 0b1001001)"#).expect("Failed to parse.");
+        assert_eq!(ast.into_iter().next().unwrap(),
+        Expression {
+            first: Box::new(Term::Symbol("println".to_string())),
+            params: vec![Term::Number(0b1001001)]
+        });
     }
 
     #[test]
