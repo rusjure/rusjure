@@ -1,4 +1,4 @@
-#![forbid(unsafe)]
+#![forbid(unsafe_code)]
 
 mod expr;
 mod parser;
