@@ -34,6 +34,13 @@ mod tests {
             params: vec![Term::Number(123)]
         });
 
+        let ast = parse(r#"(println -123)"#).expect("Failed to parse.");
+        assert_eq!(ast.into_iter().next().unwrap(),
+        Expression {
+            first: Box::new(Term::Symbol("println".to_string())),
+            params: vec![Term::Number(-123)]
+        });
+
         let ast = parse(r#"(println 0x12FA3)"#).expect("Failed to parse.");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
