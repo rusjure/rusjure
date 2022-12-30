@@ -1,4 +1,5 @@
 use rusjure_ast::Term;
+use crate::expr::parse_expr;
 use crate::parser::Pair;
 use crate::parser::Rule;
 
@@ -8,6 +9,7 @@ pub fn parse_term(pair: Pair) -> Term {
     match inner.as_rule() {
         Rule::Symbol => parse_symbol(inner),
         Rule::Number => parse_number(inner),
+        Rule::Expr => Term::Expr(parse_expr(inner)),
         term => unreachable!("All possible inners of term should be listed. Encountered: {:?}", term)
     }
 }

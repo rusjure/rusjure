@@ -8,7 +8,7 @@ MultilineComment = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 
 Expr = { "(" ~ Term+ ~ ")" }
 
-Term = ${ Number | String | Sequence | QuotedSymbol | Symbol }
+Term = { Expr | Number | String | Sequence | Symbol }
 
 Number = ${ HexNum | BinNum | FloatNum | DecNum }
 
@@ -20,8 +20,6 @@ DecNum = @{ "-"? ~ ASCII_DIGIT+ }
 String = @{ QUOTATION_MARK ~ (("\\" ~ QUOTATION_MARK) | (!QUOTATION_MARK ~ ANY))* ~ QUOTATION_MARK }
 
 Sequence = { "[" ~ Term* ~ "]" }
-
-QuotedSymbol = ${ "'" ~ Symbol }
 
 Symbol = @{ (!SymbolBannedChars ~ ANY)+ }
 SymbolBannedChars = _{ WHITESPACE | QUOTATION_MARK | "(" | ")" | "[" | "]" }

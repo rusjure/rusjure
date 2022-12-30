@@ -27,46 +27,58 @@ mod tests {
 
     #[test]
     fn test_println_numbers() {
-        let ast = parse(r#"(println 123)"#).expect("Failed to parse.");
+        let ast = parse(r#"(println 123)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("println".to_string())),
             params: vec![Term::Number(123)]
         });
 
-        let ast = parse(r#"(println -123)"#).expect("Failed to parse.");
+        let ast = parse(r#"(println -123)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("println".to_string())),
             params: vec![Term::Number(-123)]
         });
 
-        let ast = parse(r#"(println 0x12FA3)"#).expect("Failed to parse.");
+        let ast = parse(r#"(println 0x12FA3)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("println".to_string())),
             params: vec![Term::Number(0x12FA3)]
         });
 
-        let ast = parse(r#"(+ 3.14 0.5 .5 15.)"#).expect("Failed to parse.");
+        let ast = parse(r#"(+ 3.14 0.5 .5 15.)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("+".to_string())),
             params: vec![Term::Float(3.14), Term::Float(0.5), Term::Float(0.5), Term::Float(15.0)]
         });
 
-        let ast = parse(r#"(- 3.14 -0.5 .5 -15. 15.025)"#).expect("Failed to parse.");
+        let ast = parse(r#"(- 3.14 -0.5 .5 -15. 15.025)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("-".to_string())),
             params: vec![Term::Float(3.14), Term::Float(-0.5), Term::Float(0.5), Term::Float(-15.0), Term::Float(15.025)]
         });
 
-        let ast = parse(r#"(println 0b1001001)"#).expect("Failed to parse.");
+        let ast = parse(r#"(println 0b1001001)"#).expect("Failed to parse");
         assert_eq!(ast.into_iter().next().unwrap(),
         Expression {
             first: Box::new(Term::Symbol("println".to_string())),
             params: vec![Term::Number(0b1001001)]
+        });
+
+        let ast = parse(r#"(println (+ 1 2))"#).expect("Failed to parse");
+        assert_eq!(ast.into_iter().next().unwrap(),
+        Expression {
+            first: Box::new(Term::Symbol("println".to_string())),
+            params: vec![Term::Expr(
+                Expression {
+                    first: Box::new(Term::Symbol("+".to_string())),
+                    params: vec![Term::Number(1), Term::Number(2)]
+                }
+            )]
         });
     }
 
