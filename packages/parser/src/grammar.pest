@@ -2,6 +2,10 @@ Program = _{ SOI ~ Expr* ~ EOI }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 
+COMMENT = _{ SingleLineComment | MultilineComment }
+SingleLineComment = _{ "//" ~ (!NEWLINE ~ ANY)* ~ (NEWLINE | EOI) }
+MultilineComment = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
 Expr = { "(" ~ Term+ ~ ")" }
 
 Term = ${ Number | String | Sequence | QuotedSymbol | Symbol }
