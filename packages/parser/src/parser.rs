@@ -1,14 +1,42 @@
+use crate::expr::parse_expr;
+use pest::Parser;
+use rusjure_ast::Program;
+
 #[derive(pest_derive::Parser)]
 #[grammar = "grammar.pest"]
-struct RusjureParser;
+pub struct RusjureParser;
+
+pub type Pair<'a> = pest::iterators::Pair<'a, Rule>;
+
+pub fn parse(source: &str) -> Result<Program, pest::error::Error<Rule>> {
+    let mut ast = vec![];
+    let pairs = RusjureParser::parse(Rule::Program, source)?;
+    for pair in pairs {
+        if let Rule::Expr = pair.as_rule() {
+            ast.push(parse_expr(pair));
+        }
+    }
+    Ok(ast)
+}
 
 #[cfg(test)]
 mod tests {
     use pest::Parser;
+    use rusjure_ast::{Expression, Term};
     use super::*;
 
     #[test]
     fn test_println_numbers() {
+        let ast = parse(r#"(println 123)"#).expect("Failed to parse.");
+        assert_eq!(ast.into_iter().next().unwrap(),
+        Expression {
+            first: Box::new(Term::Symbol("println".to_string())),
+            params: vec![Term::Number(123)]
+        });
+    }
+
+    #[test]
+    fn test_pest_println_numbers() {
         {
             let expr = RusjureParser::parse(Rule::Program, r#"(println 123)"#).expect("Failed to parse")
                 .next().unwrap();
