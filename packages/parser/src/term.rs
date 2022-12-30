@@ -21,7 +21,10 @@ fn parse_number(pair: Pair) -> Term {
     assert_eq!(pair.as_rule(), Rule::Number);
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
-        Rule::DecNum => Term::Number(inner.as_str().parse().expect("Number should be already valid.")),
+        Rule::DecNum => Term::Number(inner.as_str().parse().expect("Number should be already valid")),
+        Rule::HexNum => Term::Number(i64::from_str_radix(inner.as_str()
+                                                             .trim_start_matches("0x"), 16)
+            .expect("Number should be already valid")),
         num => unreachable!("All possible inners of term should be listed. Encountered: {:?}", num)
     }
 }
