@@ -8,4 +8,4 @@ repository = "https://github.com/ArtifyCZ/rusjure"
 [dependencies]
 rusjure_ast = { version = "0.0.0", path = "../ast" }
 
-inkwell = "0.1.0-beta.5"
+llvm-safely = { version = "0.0.0", path = "../llvm" }

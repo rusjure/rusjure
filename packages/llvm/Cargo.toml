@@ -1,0 +1,13 @@
+[package]
+name = "llvm-safely"
+version = "0.0.0"
+authors = ["Artify"]
+edition = '2021'
+repository = "https://github.com/ArtifyCZ/rusjure"
+
+[features]
+default = ["llvm140"]
+llvm140 = ["llvm-sys-140"]
+
+[dependencies]
+llvm-sys-140 = { package = "llvm-sys", version = "140.0.2", optional = true }
