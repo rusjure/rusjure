@@ -1,12 +1,8 @@
 [package]
-name = "rusjure_parser"
+name = "rusjure_ast"
 version = "0.0.0"
 authors = ["Artify"]
 edition = '2021'
 repository = "https://github.com/ArtifyCZ/rusjure"
 
 [dependencies]
-rusjure_ast = { version = "0.0.0", path = "../ast" }
-
-pest = "2.5"
-pest_derive = "2.5"
