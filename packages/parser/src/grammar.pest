@@ -1,0 +1,23 @@
+Program = _{ SOI ~ Expr* ~ EOI }
+
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+Expr = { "(" ~ Term+ ~ ")" }
+
+Term = ${ Number | String | Sequence | QuotedSymbol | Symbol }
+
+Number = ${ HexNum | BinNum | FloatNum | DecNum }
+
+HexNum = @{ "0x" ~ ASCII_HEX_DIGIT+ }
+BinNum = @{ "0b" ~ ("0" | "1")+ }
+FloatNum = @{ (ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT*) | ("." ~ ASCII_DIGIT+) }
+DecNum = @{ ASCII_DIGIT+ }
+
+String = @{ QUOTATION_MARK ~ (("\\" ~ QUOTATION_MARK) | (!QUOTATION_MARK ~ ANY))* ~ QUOTATION_MARK }
+
+Sequence = { "[" ~ Term* ~ "]" }
+
+QuotedSymbol = ${ "'" ~ Symbol }
+
+Symbol = @{ (!SymbolBannedChars ~ ANY)+ }
+SymbolBannedChars = _{ WHITESPACE | QUOTATION_MARK | "(" | ")" | "[" | "]" }
