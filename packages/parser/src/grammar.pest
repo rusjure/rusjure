@@ -25,7 +25,19 @@ Symbol = @{ (!SymbolBannedChars ~ ANY)+ }
 SymbolBannedChars = _{ WHITESPACE | QUOTATION_MARK | "(" | ")" | "[" | "]" }
 
 /*
- * # reader macro ->
+ * Whitespace = java.lang.Character.isWhiteSpace(char ch)
+ * SpecialReaderMacro = [`~@]
+ * String = "<chars>" ->> special chars: \\ \b \f \n \r \t \u[[:number:]]{4} - unicode
+ * TillEndOfLineComment = ;
+ * Var = '<symbol> == (var symbol)
+ * Deref = @<symbol> == (deref symbol)
+ * Meta = ^{:metakey1 :metavalue1, :k1 true, :tag String} == ^{:metakey1 :metavalue1} ^:k1 ^String // also possible
+ * List = (<items>)
+ * Vector = [<items>]
+ * HashMap = {<items>}
+ * Char = \.{1} ->char , specials: \backspace \formfeed \newline \return \space \tab \u[[:number:]]{4} - unicode, \o[[:number:]]{3} - octal
+ * AnonymousFucntionArgument = %1, %2, ..., %9 + %&  ->> see #() reader macro
+ * DispatchReaderMacro = # ->> see below (prepend '#' before the form)
  *     #^{:metakey1 :metavalue1, :k1 true, :tag String} == #^{:metakey1 :metavalue1} #^:k1 #^String
  *     ##<symbolic float value> ->> ##Inf, ##-Inf, ##NaN
  *     #'<symbol> == (var symbol)
