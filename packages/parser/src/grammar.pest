@@ -51,4 +51,20 @@ SymbolBannedChars = _{ WHITESPACE | QUOTATION_MARK | "(" | ")" | "[" | "]" }
  *     #?(:clj java.lang.Math.cos, :cljs js/math.cos) ->> conditional reader depending on platform
  *     #:Hello{:foo 1 :bar 2} == {:Hello/foo 1 :Hello/bar 2} // namespace map reader
  *          #::{:foo 1 :bar 2} == {:project.current.namespace/foo 1 :project.current.namespace 2}
+ *
+ * Unquote = ~ (see below)
+ * SyntaxQuote = `
+ *     useful in macros
+ *     (let [x 123, y 456, z ["hello" :world ()], w (baz :foo 404)]
+ *       `(bar x ~y ~@z ~@w))
+ *     // 2nd line expands to:
+ *     (quote (bar current.namespace/x 123 "hello" :world () baz :foo 404))
+ *
+ *     `(let [a 345, b 432, c# 748, d# 45, c 415]
+ *        (~a ~b c# d# ~c))
+ *     // may expand to something like this . uses '#' as unique symbols, if not used in SyntaxQuote, wrong syntax!!!
+ *     (let [a 345, b 432, __c__auto__7402__ 748, __c__auto__7407__ 45, c 415]
+ *       (~a ~b __c__auto__7402__ __c__auto__7407__ ~c))
+ *
+ *
 */
