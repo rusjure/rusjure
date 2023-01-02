@@ -23,3 +23,20 @@ Sequence = { "[" ~ Term* ~ "]" }
 
 Symbol = @{ (!SymbolBannedChars ~ ANY)+ }
 SymbolBannedChars = _{ WHITESPACE | QUOTATION_MARK | "(" | ")" | "[" | "]" }
+
+/*
+ * # reader macro ->
+ *     #^{:metakey1 :metavalue1, :k1 true, :tag String} == #^{:metakey1 :metavalue1} #^:k1 #^String
+ *     ##<symbolic float value> ->> ##Inf, ##-Inf, ##NaN
+ *     #'<symbol> == (var symbol)
+ *     #"<regex>"
+ *     #(apply abc %1 %3 %2 %&) == (fn [x y z & args] (apply abc x z y args)) // WARNING: CAN'T DOUBLE NEST -> ERROR!
+ *     #{<hash-set>} // IF NOT DISTINCT ITEMS, FAIL!
+ *     #=(println "Hello, world!") ->> evaluates instantly, without macroexpanding and interpreting symbols
+ *     #!<comment till end of line>
+ *     #<<unreadable form>> ->> ERROR
+ *     #_(this form will be discarded) #_123 #_"abc" #_hello #_#{:uwu :nice} // all of these are forms
+ *     #?(:clj java.lang.Math.cos, :cljs js/math.cos) ->> conditional reader depending on platform
+ *     #:Hello{:foo 1 :bar 2} == {:Hello/foo 1 :Hello/bar 2} // namespace map reader
+ *          #::{:foo 1 :bar 2} == {:project.current.namespace/foo 1 :project.current.namespace 2}
+*/
