@@ -2,6 +2,7 @@
 
 members = [
     "packages/ast",
+    "packages/code_analyzer",
     "packages/compiler",
     "packages/lst",
     "packages/parser",
