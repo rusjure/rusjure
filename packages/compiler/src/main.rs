@@ -16,9 +16,8 @@ fn main() {
 
     let context = Context::create();
     let module = build_module(&context, program);
-    let std = build_std(&context);
     let engine = module.create_jit_execution_engine(OptimizationLevel::Aggressive).unwrap();
-    engine.add_module(&std).unwrap();
+    build_std(&context, &engine);
     unsafe {
         type Addition = unsafe extern "C" fn(i32, i32) -> i32;
         let add: JitFunction<Addition> = engine.get_function("add").unwrap();
