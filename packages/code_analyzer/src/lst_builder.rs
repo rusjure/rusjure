@@ -1,5 +1,4 @@
 use crate::ilrt;
-use crate::ilrt::{Constant, Expression, Term};
 
 pub struct LstBuilder {
 }
@@ -16,11 +15,11 @@ impl LstBuilder {
 
     fn b_expr<'a>(&mut self, expr: &'a ilrt::Expression<'a>) -> lst::Expression<'a> {
         match expr {
-            Expression::Call { target, params } => lst::Expression::Call {
+            ilrt::Expression::Call { target, params } => lst::Expression::Call {
                 target,
                 params: self.b_call_params(params),
             },
-            Expression::BinaryOperation { .. } => todo!(),
+            ilrt::Expression::BinaryOperation { .. } => todo!(),
         }
     }
 
@@ -32,15 +31,15 @@ impl LstBuilder {
 
     fn b_call_param<'a>(&mut self, param: &'a ilrt::Term<'a>) -> lst::Term<'a> {
         match param {
-            Term::Constant(c) => lst::Term::Const(self.b_const(c)),
+            ilrt::Term::Constant(c) => lst::Term::Const(self.b_const(c)),
         }
     }
 
     fn b_const<'a>(&mut self, c: &'a ilrt::Constant<'a>) -> lst::Constant<'a> {
         match c {
-            Constant::String(string) => lst::Constant::String(string),
-            Constant::Int(_) => todo!(),
-            Constant::Float(_) => todo!(),
+            ilrt::Constant::String(string) => lst::Constant::String(string),
+            ilrt::Constant::Int(_) => todo!(),
+            ilrt::Constant::Float(_) => todo!(),
         }
     }
 }
