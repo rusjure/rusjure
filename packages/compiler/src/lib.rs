@@ -11,16 +11,11 @@ extern fn std_addition(x: i32, y: i32) -> i32 {
     res
 }
 
-unsafe extern fn std_println(str: *mut i8) {
+unsafe extern fn std_println(str: *const c_char) {
     unsafe {
-        println!("Foo");
         let str = CStr::from_ptr(str);
-        println!("Bar");
         let str = str.to_str().unwrap();
-        println!("Baz");
         println!("{}", str);
-        println!("Xd");
-        println!();
     }
 }
 
@@ -51,8 +46,8 @@ pub fn build_module<'ctx>(module: &Module<'ctx>, context: &'ctx Context) {
     let builder = context.create_builder();
     builder.position_at_end(entry_b);
 
-    let str = context.const_string(b"Hello world!\n", true);
+    let str = builder.build_global_string_ptr("Hello world!", "msg");
 
-    let _ = builder.build_call(module.get_function("println").unwrap(), &[str.into()], "println");
+    let _ = builder.build_call(module.get_function("println").unwrap(), &[str.as_pointer_value().into()], "println");
     builder.build_return(None);
 }
