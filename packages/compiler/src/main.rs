@@ -1,7 +1,7 @@
 use inkwell::context::Context;
 use inkwell::execution_engine::JitFunction;
 use inkwell::OptimizationLevel;
-use rusjure_compiler::{build_module, std_headers, link_std, std_module};
+use rusjure_compiler::{build_module, std_module};
 
 fn main() {
     // let program: Program = vec![
@@ -17,13 +17,11 @@ fn main() {
     let std = std_module(&context);
     let module = context.create_module("main");
     module.link_in_module(std).unwrap();
-    // std_headers(&module, &context);
     build_module(&module, &context);
     let engine = module.create_jit_execution_engine(OptimizationLevel::Aggressive).unwrap();
-    // link_std(&module, &engine);
     unsafe {
-        type MainFn = unsafe extern "C" fn() -> ();
+        type MainFn = unsafe extern "C" fn(i64, i64) -> i64;
         let main: JitFunction<MainFn> = engine.get_function("main").unwrap();
-        main.call();
+        println!("result: {}", main.call(15, 30));
     }
 }

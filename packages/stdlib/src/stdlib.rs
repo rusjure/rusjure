@@ -1,5 +1,3 @@
-#![no_std]
-
 use core::ffi::CStr;
 
 extern {
@@ -7,7 +5,7 @@ extern {
 }
 
 #[no_mangle]
-pub extern "C" fn addition(a: usize, b: usize) -> usize {
+pub extern "C" fn addition(a: i64, b: i64) -> i64 {
     a + b
 }
 
