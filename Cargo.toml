@@ -6,4 +6,5 @@ members = [
     "packages/compiler",
     "packages/lst",
     "packages/parser",
+    "packages/stdlib",
 ]
