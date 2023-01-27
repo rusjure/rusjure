@@ -4,3 +4,4 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
+rusjure_ast = { version = "0.0.0", path = "../ast" }
