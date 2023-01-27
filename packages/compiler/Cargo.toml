@@ -9,4 +9,4 @@ repository = "https://github.com/ArtifyCZ/rusjure"
 rusjure_lst = { version = "0.0.0", path = "../lst" }
 rusjure_stdlib = { version = "0.0.0", path = "../stdlib" }
 
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm15-0"] }
+inkwell = { version = "0.1.0-beta.5", features = ["llvm15-0"] }
