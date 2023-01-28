@@ -9,7 +9,7 @@ impl Interpreter {
         match term {
             Term::Expr(_) => todo!(),
             Term::Symbol(_) => todo!(),
-            Term::String(_) => todo!(),
+            Term::String(str) => RsjValue::String(str.to_string()),
             Term::Number(n) => RsjValue::Int(*n),
             Term::Float(f) => RsjValue::Float(*f),
             Term::Sequence(_) => todo!(),
@@ -46,6 +46,19 @@ mod tests {
         assert_eq!(res_a, a);
 
         let RsjValue::Float(res_b) = interpreter.eval(&Term::Float(b)) else { todo!() };
+        assert_eq!(res_b, b);
+    }
+
+    #[test]
+    fn provide_const_string() {
+        let a = "foobar";
+        let b = "foobarbaz";
+
+        let interpreter = Interpreter {};
+        let RsjValue::String(res_a) = interpreter.eval(&Term::String(a.to_string())) else { todo!() };
+        assert_eq!(res_a, a);
+
+        let RsjValue::String(res_b) = interpreter.eval(&Term::String(b.to_string())) else { todo!() };
         assert_eq!(res_b, b);
     }
 }
