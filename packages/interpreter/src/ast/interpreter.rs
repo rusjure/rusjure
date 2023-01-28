@@ -12,7 +12,7 @@ impl Interpreter {
             Term::String(str) => RsjValue::String(str.to_string()),
             Term::Number(n) => RsjValue::Int(*n),
             Term::Float(f) => RsjValue::Float(*f),
-            Term::Sequence(_) => todo!(),
+            Term::Sequence(seq) => RsjValue::Sequence(seq.iter().map(|term| self.eval(term)).collect()),
         }
     }
 }
@@ -60,5 +60,22 @@ mod tests {
 
         let RsjValue::String(res_b) = interpreter.eval(&Term::String(b.to_string())) else { todo!() };
         assert_eq!(res_b, b);
+    }
+
+    #[test]
+    fn provide_const_sequence() {
+        let seq = vec![Term::Number(15), Term::String("foo".to_string())];
+
+        let interpreter = Interpreter {};
+        let RsjValue::Sequence(iseq) = interpreter.eval(&Term::Sequence(seq)) else { todo!() };
+        let mut it = iseq.iter();
+
+        let Some(RsjValue::Int(num)) = it.next() else { todo!() };
+        assert_eq!(*num, 15);
+
+        let Some(RsjValue::String(str)) = it.next() else { todo!() };
+        assert_eq!(str, "foo");
+
+        assert_eq!(it.next(), None);
     }
 }

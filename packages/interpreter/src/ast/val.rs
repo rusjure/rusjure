@@ -3,4 +3,5 @@ pub enum RsjValue {
     Int(i64),
     Float(f64),
     String(String),
+    Sequence(Vec<RsjValue>),
 }
