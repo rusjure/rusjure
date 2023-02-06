@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM debian:bullseye
 
 RUN apt-get update
 RUN apt-get -y install software-properties-common
