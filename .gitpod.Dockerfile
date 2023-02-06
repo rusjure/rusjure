@@ -1,5 +1,7 @@
 FROM debian:bullseye
 
+USER root
+
 RUN apt-get update
 RUN apt-get -y install software-properties-common
 
