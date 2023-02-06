@@ -3,7 +3,7 @@ FROM debian:bullseye
 USER root
 
 RUN apt-get update
-RUN apt-get -y install software-properties-common
+RUN apt-get -y install software-properties-common apt-transport-https
 
 RUN add-apt-repository 'deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main'
 RUN apt-get update
