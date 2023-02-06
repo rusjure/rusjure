@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM rust:bullseye
 
 RUN apt-get update
 RUN apt-get -y install software-properties-common apt-transport-https wget gnupg git curl
