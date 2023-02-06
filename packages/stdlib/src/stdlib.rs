@@ -1,3 +1,5 @@
+extern crate core;
+
 use core::ffi::CStr;
 
 extern {

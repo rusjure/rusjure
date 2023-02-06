@@ -1,0 +1,11 @@
+image: ghcr.io/traversaro/gitpod-ubuntu-20.04:latest
+tasks:
+  - before: |
+      apt-get update
+      apt-get -y install software-properties-common
+      wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+      add-apt-repository 'deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main'
+      apt-get update
+      apt-get -y install llvm-15 libpolly-15-dev
+    init: cargo build
+    command: cargo watch -x run
