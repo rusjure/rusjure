@@ -1,4 +1,5 @@
-image: ghcr.io/traversaro/gitpod-ubuntu-20.04:latest
+image:
+  file: .gitpod.Dockerfile
 tasks:
   - before: |
       apt-get update
