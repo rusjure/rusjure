@@ -1,9 +1,9 @@
-FROM rust:bullseye
+FROM gitpod/workspace-full
 
-RUN apt-get update
-RUN apt-get -y install software-properties-common apt-transport-https wget gnupg git curl
+RUN sudo apt-get update
+RUN sudo apt-get -y install software-properties-common apt-transport-https wget gnupg git curl
 
-RUN sh -c "wget -O - 'https://apt.llvm.org/llvm-snapshot.gpg.key' | apt-key add -"
-RUN add-apt-repository 'deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main'
-RUN apt-get update
-RUN apt-get -y install llvm-15 libpolly-15-dev
+RUN sudo sh -c "wget -O - https://apt.llvm.org/llvm.sh > ./llvm.sh"
+RUN sudo chmod a+x ./llvm.sh
+RUN sudo ./llvm.sh 15
+RUN sudo apt-get -y install libpolly-15-dev
