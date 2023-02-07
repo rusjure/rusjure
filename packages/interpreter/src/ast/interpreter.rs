@@ -1,5 +1,7 @@
-use rusjure_ast::Term;
+use rusjure_ast::{Term, Expression};
 use crate::ast::val::RsjValue;
+
+use super::val::RsjFunction;
 
 pub struct Interpreter {
 }
@@ -7,19 +9,51 @@ pub struct Interpreter {
 impl Interpreter {
     pub fn eval(&self, term: &Term) -> RsjValue {
         match term {
-            Term::Expr(_) => todo!(),
-            Term::Symbol(_) => todo!(),
+            Term::Expr(Expression { first, params }) => {
+                let target = self.eval(first);
+                let params = match params.len() {
+                    0 => RsjValue::Nil,
+                    1 => self.eval(params.first().unwrap()),
+                    _ => RsjValue::Sequence(params.iter().map(|x| self.eval(x)).collect()),
+                };
+                self.exec(target, params)
+            },
+            Term::Symbol(s) => self.provide_symbol(s),
             Term::String(str) => RsjValue::String(str.to_string()),
             Term::Number(n) => RsjValue::Int(*n),
             Term::Float(f) => RsjValue::Float(*f),
             Term::Sequence(seq) => RsjValue::Sequence(seq.iter().map(|term| self.eval(term)).collect()),
         }
     }
+
+    fn exec(&self, target: RsjValue, params: RsjValue) -> RsjValue {
+        match target {
+            RsjValue::Function(function) => match function {
+                RsjFunction::External(f) => f(params),
+            },
+            _ => todo!(),
+        }
+    }
+
+    fn provide_symbol(&self, symbol: &str) -> RsjValue {
+        match symbol {
+            "println" => RsjValue::Function(RsjFunction::External(Box::new(println))),
+            _ => todo!(),
+        }
+    }
+}
+
+fn println(params: RsjValue) -> RsjValue {
+    match params {
+        RsjValue::String(s) => println!("{}", s),
+        _ => todo!(),
+    };
+    RsjValue::Nil
 }
 
 #[cfg(test)]
 mod tests {
-    use rusjure_ast::Term;
+    use rusjure_ast::{Term, Expression};
     use crate::ast::interpreter::Interpreter;
     use crate::ast::val::RsjValue;
 
@@ -77,5 +111,16 @@ mod tests {
         assert_eq!(str, "foo");
 
         assert_eq!(it.next(), None);
+    }
+
+    #[test]
+    fn print_hello_world() {
+        let expr = Term::Expr(Expression {
+            first: Box::new(Term::Symbol("println".to_string())),
+            params: vec![Term::String("Hello world!".to_string())]
+        });
+
+        let interpreter = Interpreter {};
+        assert_eq!(interpreter.eval(&expr), RsjValue::Nil);
     }
 }
