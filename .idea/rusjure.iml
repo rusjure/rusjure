@@ -6,6 +6,12 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/ast/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/packages/parser/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/packages/compiler/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/code_analyzer/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/lst/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/std_wrapper/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/interpreter/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/stdlib/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/stdlib/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
