@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::collections::VecDeque;
+
 use rusjure_ast::{Term, Expression};
 use crate::ast::val::RsjValue;
 
@@ -7,6 +10,11 @@ pub struct Interpreter {
 }
 
 impl Interpreter {
+    pub fn new() -> Self {
+        Self {
+        }
+    }
+
     pub fn eval(&self, term: &Term) -> RsjValue {
         match term {
             Term::Expr(Expression { first, params }) => {
@@ -62,7 +70,7 @@ mod tests {
         let a = 15;
         let b = 30;
 
-        let interpreter = Interpreter {};
+        let interpreter = Interpreter::new();
         let RsjValue::Int(res_a) = interpreter.eval(&Term::Number(a)) else { todo!() };
         assert_eq!(res_a, a);
 
@@ -75,7 +83,7 @@ mod tests {
         let a = 15.0;
         let b = 30.5;
 
-        let interpreter = Interpreter {};
+        let interpreter = Interpreter::new();
         let RsjValue::Float(res_a) = interpreter.eval(&Term::Float(a)) else { todo!() };
         assert_eq!(res_a, a);
 
@@ -88,7 +96,7 @@ mod tests {
         let a = "foobar";
         let b = "foobarbaz";
 
-        let interpreter = Interpreter {};
+        let interpreter = Interpreter::new();
         let RsjValue::String(res_a) = interpreter.eval(&Term::String(a.to_string())) else { todo!() };
         assert_eq!(res_a, a);
 
@@ -100,7 +108,7 @@ mod tests {
     fn provide_const_sequence() {
         let seq = vec![Term::Number(15), Term::String("foo".to_string())];
 
-        let interpreter = Interpreter {};
+        let interpreter = Interpreter::new();
         let RsjValue::Sequence(iseq) = interpreter.eval(&Term::Sequence(seq)) else { todo!() };
         let mut it = iseq.iter();
 
@@ -120,7 +128,7 @@ mod tests {
             params: vec![Term::String("Hello world!".to_string())]
         });
 
-        let interpreter = Interpreter {};
+        let interpreter = Interpreter::new();
         assert_eq!(interpreter.eval(&expr), RsjValue::Nil);
     }
 }
