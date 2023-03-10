@@ -2,5 +2,6 @@
 
 members = [
     "packages/ast",
+    "packages/exec",
     "packages/parser",
 ]
