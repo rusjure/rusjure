@@ -1,8 +1,0 @@
-[package]
-name = "rusjure_lst"
-version = "0.0.0"
-authors = ["Artify"]
-edition = '2021'
-repository = "https://github.com/ArtifyCZ/rusjure"
-
-[dependencies]

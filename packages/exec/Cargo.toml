@@ -1,10 +1,9 @@
 [package]
-name = "rusjure_analyzer"
+name = "rusjure_exec"
 version = "0.0.0"
 authors = ["Artify"]
 edition = '2021'
 repository = "https://github.com/ArtifyCZ/rusjure"
 
 [dependencies]
-rusjure_ast = { version = "0.0.0", path = "../ast" }
-rusjure_lst = { version = "0.0.0", path = "../lst" }
+rusjure_ast = { path = "../ast", version = "0.0.0" }
