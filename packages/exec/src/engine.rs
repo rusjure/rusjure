@@ -21,7 +21,7 @@ impl ExecEngine {
             Term::Symbol(_) => todo!(),
             Term::String(_) => todo!(),
             Term::Number(n) => n.into(),
-            Term::Float(_) => todo!(),
+            Term::Float(x) => x.into(),
             Term::Sequence(_) => todo!(),
         }
     }

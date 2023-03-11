@@ -1,5 +1,6 @@
 pub enum RsjValue {
     Int(i64),
+    Float(f64),
 }
 
 pub trait IntoRsjValue {
@@ -16,6 +17,12 @@ impl<T> From<T> for RsjValue where
 impl IntoRsjValue for i64 {
     fn into(self) -> RsjValue {
         RsjValue::Int(self)
+    }
+}
+
+impl IntoRsjValue for f64 {
+    fn into(self) -> RsjValue {
+        RsjValue::Float(self)
     }
 }
 
