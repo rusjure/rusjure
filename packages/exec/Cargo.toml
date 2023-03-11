@@ -7,3 +7,5 @@ repository = "https://github.com/ArtifyCZ/rusjure"
 
 [dependencies]
 rusjure_ast = { path = "../ast", version = "0.0.0" }
+
+inkwell = { version = "0.1.0-beta.5", features = ["llvm15-0"] }
