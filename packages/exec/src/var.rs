@@ -1,3 +1,5 @@
+use either::Either;
+
 pub enum RsjValue {
     Int(i64),
     Float(f64),
@@ -23,6 +25,17 @@ impl IntoRsjValue for i64 {
 impl IntoRsjValue for f64 {
     fn into(self) -> RsjValue {
         RsjValue::Float(self)
+    }
+}
+
+impl<T1, T2> IntoRsjValue for Either<T1, T2> where
+        T1: IntoRsjValue,
+        T2: IntoRsjValue {
+    fn into(self) -> RsjValue {
+        match self {
+            Either::Left(x) => x.into(),
+            Either::Right(x) => x.into(),
+        }
     }
 }
 
