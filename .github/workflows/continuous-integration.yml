@@ -1,0 +1,117 @@
+name: Rusjure CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  parser:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        toolchain:
+          - stable
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-clang@v1
+        with:
+          version: latest
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: "v0-rust"
+          shared-key: ""
+          key: ""
+          env-vars: "CARGO CC CFLAGS CXX CMAKE RUST"
+          workspaces: ". -> target"
+          cache-directories: ""
+          cache-targets: true
+          cache-on-failure: true
+          save-if: true
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package rusjure_parser
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --package rusjure_parser
+      - name: Rust FMT
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --package rusjure_parser --check
+      - name: Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package rusjure_parser -- -D warnings
+
+  exec:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        toolchain:
+          - stable
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-clang@v1
+        with:
+          version: latest
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: "v0-rust"
+          shared-key: ""
+          key: ""
+          env-vars: "CARGO CC CFLAGS CXX CMAKE RUST"
+          workspaces: ". -> target"
+          cache-directories: ""
+          cache-targets: true
+          cache-on-failure: true
+          save-if: true
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package rusjure_exec
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --package rusjure_exec
+      - name: Rust FMT
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --package rusjure_exec --check
+      - name: Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package rusjure_exec -- -D warnings
