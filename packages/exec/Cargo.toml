@@ -3,6 +3,7 @@ name = "rusjure_exec"
 version = "0.0.0"
 authors = ["Richard Tichý <tichy@artify.zone>"]
 edition = '2021'
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/rusjure/rusjure"
 
 [dependencies]
