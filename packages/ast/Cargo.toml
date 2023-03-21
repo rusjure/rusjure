@@ -3,6 +3,6 @@ name = "rusjure_ast"
 version = "0.0.0"
 authors = ["Richard Tichý <tichy@artify.zone>"]
 edition = '2021'
-repository = "https://github.com/ArtifyCZ/rusjure"
+repository = "https://github.com/rusjure/rusjure"
 
 [dependencies]
