@@ -1,6 +1,6 @@
 use crate::expr::parse_expr;
 use pest::Parser;
-use rusjure_ast::Program;
+use rusjure_tokens::Program;
 
 #[derive(pest_derive::Parser)]
 #[grammar = "grammar.pest"]
@@ -8,7 +8,7 @@ pub struct RusjureParser;
 
 pub type Pair<'a> = pest::iterators::Pair<'a, Rule>;
 
-pub fn parse(source: &str) -> Result<Program, pest::error::Error<Rule>> {
+pub fn parse(source: &str) -> Result<Program, Box<pest::error::Error<Rule>>> {
     let mut ast = vec![];
     let pairs = RusjureParser::parse(Rule::Program, source)?;
     for pair in pairs {
@@ -21,89 +21,116 @@ pub fn parse(source: &str) -> Result<Program, pest::error::Error<Rule>> {
 
 #[cfg(test)]
 mod tests {
-    use pest::Parser;
-    use rusjure_ast::{Expression, Term};
     use super::*;
+    use pest::Parser;
+    use rusjure_tokens::{Expression, Term};
 
     #[test]
     fn test_println_numbers() {
         let ast = parse(r#"(println 123)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("println".to_string())),
-            params: vec![Term::Number(123)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("println".to_string())),
+                params: vec![Term::Number(123)]
+            }
+        );
 
         let ast = parse(r#"(println -123)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("println".to_string())),
-            params: vec![Term::Number(-123)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("println".to_string())),
+                params: vec![Term::Number(-123)]
+            }
+        );
 
         let ast = parse(r#"(println 0x12FA3)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("println".to_string())),
-            params: vec![Term::Number(0x12FA3)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("println".to_string())),
+                params: vec![Term::Number(0x12FA3)]
+            }
+        );
 
         let ast = parse(r#"(+ 3.14 0.5 .5 15.)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("+".to_string())),
-            params: vec![Term::Float(3.14), Term::Float(0.5), Term::Float(0.5), Term::Float(15.0)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("+".to_string())),
+                params: vec![
+                    Term::Float(3.14),
+                    Term::Float(0.5),
+                    Term::Float(0.5),
+                    Term::Float(15.0)
+                ]
+            }
+        );
 
         let ast = parse(r#"(- 3.14 -0.5 .5 -15. 15.025)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("-".to_string())),
-            params: vec![Term::Float(3.14), Term::Float(-0.5), Term::Float(0.5), Term::Float(-15.0), Term::Float(15.025)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("-".to_string())),
+                params: vec![
+                    Term::Float(3.14),
+                    Term::Float(-0.5),
+                    Term::Float(0.5),
+                    Term::Float(-15.0),
+                    Term::Float(15.025)
+                ]
+            }
+        );
 
         let ast = parse(r#"(println 0b1001001)"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("println".to_string())),
-            params: vec![Term::Number(0b1001001)]
-        });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("println".to_string())),
+                params: vec![Term::Number(0b1001001)]
+            }
+        );
 
         let ast = parse(r#"(println (+ 1 2))"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-        Expression {
-            first: Box::new(Term::Symbol("println".to_string())),
-            params: vec![Term::Expr(
-                Expression {
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("println".to_string())),
+                params: vec![Term::Expr(Expression {
                     first: Box::new(Term::Symbol("+".to_string())),
                     params: vec![Term::Number(1), Term::Number(2)]
-                }
-            )]
-        });
+                })]
+            }
+        );
     }
 
     #[test]
     fn test_parse_function_def() {
         let ast = parse(r#"(defn foo [num] (println num))"#).expect("Failed to parse");
-        assert_eq!(ast.into_iter().next().unwrap(),
-                   Expression {
-                       first: Box::new(Term::Symbol("defn".to_string())),
-                       params: vec![
-                           Term::Symbol("foo".to_string()),
-                           Term::Sequence(vec![Term::Symbol("num".to_string())]),
-                           Term::Expr(Expression {
-                               first: Box::from(Term::Symbol("println".to_string())),
-                               params: vec![Term::Symbol("num".to_string())]
-                           })
-                       ]
-                   });
+        assert_eq!(
+            ast.into_iter().next().unwrap(),
+            Expression {
+                first: Box::new(Term::Symbol("defn".to_string())),
+                params: vec![
+                    Term::Symbol("foo".to_string()),
+                    Term::Sequence(vec![Term::Symbol("num".to_string())]),
+                    Term::Expr(Expression {
+                        first: Box::from(Term::Symbol("println".to_string())),
+                        params: vec![Term::Symbol("num".to_string())]
+                    })
+                ]
+            }
+        );
     }
 
     #[test]
     fn test_pest_println_numbers() {
         {
-            let expr = RusjureParser::parse(Rule::Program, r#"(println 123)"#).expect("Failed to parse")
-                .next().unwrap();
+            let expr = RusjureParser::parse(Rule::Program, r#"(println 123)"#)
+                .expect("Failed to parse")
+                .next()
+                .unwrap();
             assert_eq!(expr.as_rule(), Rule::Expr);
             let mut inner = expr.into_inner();
 
@@ -123,8 +150,10 @@ mod tests {
         }
 
         {
-            let expr = RusjureParser::parse(Rule::Program, r#"(println 0b01001)"#).expect("Failed to parse")
-                .next().unwrap();
+            let expr = RusjureParser::parse(Rule::Program, r#"(println 0b01001)"#)
+                .expect("Failed to parse")
+                .next()
+                .unwrap();
             assert_eq!(expr.as_rule(), Rule::Expr);
             let mut inner = expr.into_inner();
 
@@ -144,8 +173,10 @@ mod tests {
         }
 
         {
-            let expr = RusjureParser::parse(Rule::Program, r#"(println 0x5A56F32D)"#).expect("Failed to parse")
-                .next().unwrap();
+            let expr = RusjureParser::parse(Rule::Program, r#"(println 0x5A56F32D)"#)
+                .expect("Failed to parse")
+                .next()
+                .unwrap();
             assert_eq!(expr.as_rule(), Rule::Expr);
             let mut inner = expr.into_inner();
 

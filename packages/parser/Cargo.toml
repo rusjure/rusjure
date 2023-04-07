@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/rusjure/rusjure"
 
 [dependencies]
-rusjure_ast = { version = "0.0.0", path = "../ast" }
+rusjure_tokens = { version = "0.0.0", path = "../tokens" }
 
 pest = "2.5"
 pest_derive = "2.5"
