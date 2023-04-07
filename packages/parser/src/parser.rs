@@ -1,6 +1,6 @@
 use crate::expr::parse_expr;
 use pest::Parser;
-use rusjure_tokens::Program;
+use rusjure_tokens::TokenStream;
 
 #[derive(pest_derive::Parser)]
 #[grammar = "grammar.pest"]
@@ -8,7 +8,7 @@ pub struct RusjureParser;
 
 pub type Pair<'a> = pest::iterators::Pair<'a, Rule>;
 
-pub fn parse(source: &str) -> Result<Program, Box<pest::error::Error<Rule>>> {
+pub fn parse(source: &str) -> Result<TokenStream, Box<pest::error::Error<Rule>>> {
     let mut ast = vec![];
     let pairs = RusjureParser::parse(Rule::Program, source)?;
     for pair in pairs {

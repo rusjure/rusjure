@@ -5,4 +5,4 @@ mod term;
 
 pub use expr::Expression;
 pub use term::Term;
-pub type Program = Vec<Expression>;
+pub type TokenStream = Vec<Expression>;
