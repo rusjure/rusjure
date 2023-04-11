@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    "packages/exec",
-    "packages/parser",
-    "packages/tokens",
+    "libs/exec",
+    "libs/parser",
+    "libs/tokens",
 ]
