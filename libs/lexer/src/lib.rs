@@ -1,7 +1,5 @@
 #![forbid(unsafe_code)]
 
-mod expr;
-mod parser;
-mod term;
+mod lexer;
 
-pub use parser::parse;
+pub use lexer::parse;
