@@ -1,5 +1,5 @@
 [package]
-name = "rusjure_exec"
+name = "rusjure_parser"
 version = "0.0.0"
 authors = ["Richard Tichý <tichy@artify.zone>"]
 edition = '2021'
