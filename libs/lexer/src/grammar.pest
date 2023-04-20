@@ -1,7 +1,32 @@
-Program = _{ SOI ~ EOI }
+Program = _{ SOI ~ TokenTree* ~ EOI }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 
 COMMENT = _{ SingleLineComment | MultilineComment }
 SingleLineComment = _{ "//" ~ (!NEWLINE ~ ANY)* ~ (NEWLINE | EOI) }
 MultilineComment = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+TokenTree = { Form | Sequence | Token }
+
+Form = { QuotedForm | NonQuotedForm }
+QuotedForm = ${ "`" ~ NonQuotedForm }
+NonQuotedForm = { "(" ~ TokenTree+ ~ ")" }
+
+Sequence = { "[" ~ TokenTree* ~ "]" }
+
+Token = { String | Float | Int | Symbol }
+
+String = { "\"" ~ StringInner ~ "\"" }
+StringInner = @{ (!"\"" ~ ANY)* }
+
+Float = @{ Float1 | Float2 }
+Float1 = { DecDigit+ ~ "." ~ DecDigit* }
+Float2 = { "." ~ DecDigit+ }
+
+Int = { IntDec }
+
+IntDec = @{ "-" ~ (DecDigit)+ }
+DecDigit = { ASCII_DIGIT | "_" }
+
+Symbol = { (!SymbolForbiddenChar ~ ANY)+ }
+SymbolForbiddenChar = { "\"" | ";" | "(" | ")" | WHITESPACE }

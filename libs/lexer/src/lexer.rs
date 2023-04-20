@@ -11,10 +11,20 @@ pub fn parse(source: &str) -> Result<TokenStream, Box<pest::error::Error<Rule>>>
     let mut ast = vec![];
     let pairs = RusjureLexer::parse(Rule::Program, source)?;
     for pair in pairs {
-        if let Rule::Expr = pair.as_rule() {
-            // ast.push(parse_expr(pair));
-            todo!();
+        match pair.as_rule() {
+            Rule::TokenTree => {
+                let tt = rusjure_tokens::TokenTree::from_pest(pair);
+                ast.push(tt);
+            }
+            Rule::EOI => {
+                break;
+            }
+            _ => unreachable!(),
         }
     }
     Ok(ast)
+}
+
+pub trait FromPest {
+    fn from_pest(pair: Pair) -> Self;
 }
