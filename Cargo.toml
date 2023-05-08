@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "apps/compiler",
     "libs/lexer",
     "libs/parser",
     "libs/tokens",
