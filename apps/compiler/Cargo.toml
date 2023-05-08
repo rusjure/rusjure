@@ -13,5 +13,7 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1.0"
 
+clap = { version = "4.2", features = ["derive"] }
+
 log = { version = "0.4", features = ["std"] }
 env_logger = "0.10"
