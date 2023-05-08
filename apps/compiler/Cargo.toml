@@ -11,6 +11,10 @@ name = "rsjc"
 path = "src/main.rs"
 
 [dependencies]
+rusjure_lexer = { version = "0.0.0", path = "../../libs/lexer" }
+rusjure_parser = { version = "0.0.0", path = "../../libs/parser" }
+rusjure_tokens = { version = "0.0.0", path = "../../libs/tokens" }
+
 anyhow = "1.0"
 
 clap = { version = "4.2", features = ["derive"] }
