@@ -8,7 +8,7 @@ struct Args {
 }
 
 fn tokenize_file(filename: &str) -> anyhow::Result<Option<rusjure_tokens::TokenStream>> {
-    info!("Reading file: `{}`", filename);
+    debug!("Reading file: `{}`", filename);
 
     let src = match std::fs::read_to_string(filename) {
         Ok(ok) => ok,
