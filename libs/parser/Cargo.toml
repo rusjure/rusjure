@@ -8,3 +8,4 @@ repository = "https://github.com/rusjure/rusjure"
 
 [dependencies]
 rusjure_tokens = { path = "../tokens", version = "0.0.0" }
+llvm-sys = { version = "150.0.0", features = ["clang-sys", "force-dynamic"] }

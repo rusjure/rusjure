@@ -37,12 +37,15 @@ fn main() -> anyhow::Result<()> {
         .try_init()?;
 
     let args: Args = Args::parse();
+    let parser = rusjure_parser::Parser::default();
 
     info!("Starting up...");
 
     for filename in args.files.iter() {
-        if let Some(tt) = tokenize_file(filename)? {
-            info!("TokenStream of file `{}`: {:#?}", filename, tt);
+        if let Some(ts) = tokenize_file(filename)? {
+            for tt in ts.iter() {
+                parser.run(tt);
+            }
         }
     }
 
