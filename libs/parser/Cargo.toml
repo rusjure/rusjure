@@ -7,5 +7,6 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/rusjure/rusjure"
 
 [dependencies]
+rusjure_corelib = { path = "../corelib", version = "0.0.0" }
 rusjure_tokens = { path = "../tokens", version = "0.0.0" }
 llvm-sys = { version = "150.0.0", features = ["clang-sys", "force-dynamic"] }
