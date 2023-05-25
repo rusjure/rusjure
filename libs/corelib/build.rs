@@ -34,15 +34,10 @@ fn main() {
         content
     };
 
-    let bitcode_path = Path::new(&out_dir).join("stdlib_bc.rs");
+    let bitcode_path = Path::new(&out_dir).join("corelib.bc");
 
     let mut file = File::create(bitcode_path).expect("Failed to create file");
 
-    let bitcode = format!(
-        "pub const BITCODE: &[u8; {}] = &{:?};\n",
-        bitcode.len(),
-        bitcode
-    );
-    file.write_all(bitcode.as_bytes())
+    file.write_all(bitcode.as_slice())
         .expect("Failed to write to file");
 }
