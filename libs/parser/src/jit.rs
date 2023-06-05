@@ -1,9 +1,10 @@
 use llvm_sys::bit_reader::LLVMParseBitcode2;
 use llvm_sys::core::*;
 use llvm_sys::execution_engine::{
-    LLVMCreateExecutionEngineForModule, LLVMExecutionEngineRef, LLVMFindFunction, LLVMRunFunction,
+    LLVMCreateExecutionEngineForModule, LLVMExecutionEngineRef, LLVMFindFunction, LLVMRunFunction, LLVMLinkInMCJIT,
 };
 use llvm_sys::prelude::*;
+use llvm_sys::target::{LLVM_InitializeNativeTarget, LLVM_InitializeNativeAsmPrinter, LLVM_InitializeNativeAsmParser};
 use rusjure_tokens::{Form, Token, TokenTree};
 use std::collections::BTreeMap;
 use std::ffi::{CStr, CString};
@@ -28,6 +29,10 @@ impl Default for Jit {
 impl Jit {
     pub fn new() -> Jit {
         unsafe {
+            LLVMLinkInMCJIT();
+            LLVM_InitializeNativeTarget();
+            LLVM_InitializeNativeAsmPrinter();
+            LLVM_InitializeNativeAsmParser();
             let ctx = LLVMContextCreate();
             let b = LLVMCreateBuilderInContext(ctx);
             let m = LLVMModuleCreateWithNameInContext(b"rusjure\0".as_ptr() as *const _, ctx);
