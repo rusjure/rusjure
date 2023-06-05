@@ -73,7 +73,7 @@ impl Jit {
 
     pub fn run(&self, tt: &TokenTree) {
         match tt {
-            TokenTree::Form(f) => unsafe {
+            TokenTree::Form(f) => {
                 let Form { quoted, tokens } = f;
 
                 if *quoted {
@@ -83,15 +83,26 @@ impl Jit {
                     let first = iter.next().unwrap();
                     let _params = iter;
                     if let TokenTree::Token(Token::Symbol(f)) = first {
-                        let f = CString::new(f.as_str()).unwrap();
-                        let mut fun = null_mut();
-                        LLVMFindFunction(self.j, f.as_ptr(), &mut fun);
-                        LLVMRunFunction(self.j, fun, 0, null_mut());
+                        match f {
+                            _ => self.jit_llvm_fn(f),
+                        }
                     }
                 }
             },
             TokenTree::Sequence(_) => todo!(),
             TokenTree::Token(_) => todo!(),
+        }
+    }
+
+    fn jit_llvm_fn(&self, f: &str) {
+        unsafe {
+            let f = CString::new(f).unwrap();
+            let mut fun = null_mut();
+            LLVMFindFunction(self.j, f.as_ptr(), &mut fun);
+            if fun.is_null() {
+                panic!("Function not found: {}", f.to_string_lossy());
+            }
+            LLVMRunFunction(self.j, fun, 0, null_mut());
         }
     }
 
