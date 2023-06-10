@@ -1,10 +1,14 @@
 use llvm_sys::bit_reader::LLVMParseBitcode2;
 use llvm_sys::core::*;
 use llvm_sys::execution_engine::{
-    LLVMCreateExecutionEngineForModule, LLVMExecutionEngineRef, LLVMFindFunction, LLVMRunFunction, LLVMLinkInMCJIT,
+    LLVMCreateExecutionEngineForModule, LLVMDisposeExecutionEngine, LLVMExecutionEngineRef,
+    LLVMFindFunction, LLVMLinkInMCJIT, LLVMRemoveModule, LLVMRunFunction,
 };
+use llvm_sys::linker::LLVMLinkModules2;
 use llvm_sys::prelude::*;
-use llvm_sys::target::{LLVM_InitializeNativeTarget, LLVM_InitializeNativeAsmPrinter, LLVM_InitializeNativeAsmParser};
+use llvm_sys::target::{
+    LLVM_InitializeNativeAsmParser, LLVM_InitializeNativeAsmPrinter, LLVM_InitializeNativeTarget,
+};
 use rusjure_tokens::{Form, Token, TokenTree};
 use std::collections::BTreeMap;
 use std::ffi::{CStr, CString};
@@ -16,7 +20,6 @@ pub struct Jit {
     b: LLVMBuilderRef,
     m: LLVMModuleRef,
     j: LLVMExecutionEngineRef,
-    std: LLVMModuleRef,
     s: BTreeMap<String, ()>,
 }
 
@@ -46,11 +49,14 @@ impl Jit {
                 LLVMParseBitcode2(buf, &mut m);
                 m
             };
+
+            LLVMLinkModules2(m, std);
+
             let j = {
                 let mut j = 0x0 as LLVMExecutionEngineRef;
                 let mut err = null_mut();
 
-                LLVMCreateExecutionEngineForModule(&mut j, std, &mut err);
+                LLVMCreateExecutionEngineForModule(&mut j, m, &mut err);
                 if !err.is_null() {
                     panic!(
                         "Failed to create execution engine: {}",
@@ -65,7 +71,6 @@ impl Jit {
                 b,
                 m,
                 j,
-                std,
                 s: BTreeMap::new(),
             }
         }
@@ -73,7 +78,7 @@ impl Jit {
 
     pub fn run(&self, tt: &TokenTree) {
         match tt {
-            TokenTree::Form(f) => {
+            TokenTree::Form(f) => unsafe {
                 let Form { quoted, tokens } = f;
 
                 if *quoted {
@@ -81,9 +86,31 @@ impl Jit {
                 } else {
                     let mut iter = tokens.iter();
                     let first = iter.next().unwrap();
-                    let _params = iter;
+                    let mut params = iter;
                     if let TokenTree::Token(Token::Symbol(f)) = first {
-                        match f {
+                        match f.as_str() {
+                            "defn" => {
+                                let fn_name =
+                                    CString::new(self.to_string(params.next().unwrap())).unwrap();
+                                let fun = LLVMAddFunction(
+                                    self.m,
+                                    fn_name.as_ptr(),
+                                    LLVMFunctionType(
+                                        LLVMVoidTypeInContext(self.ctx),
+                                        null_mut(),
+                                        0,
+                                        0,
+                                    ),
+                                );
+                                let block_name = CString::new("entry").unwrap();
+                                let block = LLVMAppendBasicBlock(fun, block_name.as_ptr());
+
+                                LLVMPositionBuilderAtEnd(self.b, block);
+
+                                self.build_tt_to_fun(params.next().unwrap());
+
+                                LLVMBuildRetVoid(self.b);
+                            }
                             _ => self.jit_llvm_fn(f),
                         }
                     }
@@ -94,7 +121,31 @@ impl Jit {
         }
     }
 
-    fn jit_llvm_fn(&self, f: &str) {
+    unsafe fn build_tt_to_fun(&self, tt: &TokenTree) {
+        match tt {
+            TokenTree::Form(form) => unsafe {
+                let call_target = self.to_string(form.tokens.first().unwrap());
+                self.build_fun_call(&call_target);
+            },
+            TokenTree::Sequence(_seq) => todo!(),
+            TokenTree::Token(_token) => todo!(),
+        }
+    }
+
+    unsafe fn build_fun_call(&self, target: &str) -> LLVMValueRef {
+        let call_name = CString::new("").unwrap();
+        let call_target_name = CString::new(target).unwrap();
+        LLVMBuildCall2(
+            self.b,
+            LLVMFunctionType(LLVMVoidType(), null_mut(), 0, 0),
+            LLVMGetNamedFunction(self.m, call_target_name.as_ptr()),
+            null_mut(),
+            0,
+            call_name.as_ptr(),
+        )
+    }
+
+    unsafe fn jit_llvm_fn(&self, f: &str) {
         unsafe {
             let f = CString::new(f).unwrap();
             let mut fun = null_mut();
@@ -106,13 +157,12 @@ impl Jit {
         }
     }
 
-    #[allow(dead_code)]
     fn to_string(&self, tt: &TokenTree) -> String {
         match tt {
             TokenTree::Form(_) => todo!(),
             TokenTree::Sequence(_) => todo!(),
             TokenTree::Token(token) => match token {
-                Token::Symbol(_) => todo!(),
+                Token::Symbol(symbol) => symbol.to_string(),
                 Token::String(str) => str.to_string(),
                 Token::Number(_) => todo!(),
                 Token::Float(_) => todo!(),
@@ -124,6 +174,10 @@ impl Jit {
 impl Drop for Jit {
     fn drop(&mut self) {
         unsafe {
+            LLVMRemoveModule(self.j, self.m, &mut self.m, null_mut());
+            LLVMDisposeExecutionEngine(self.j);
+            LLVMDisposeBuilder(self.b);
+            LLVMDisposeModule(self.m);
             LLVMContextDispose(self.ctx);
         }
     }
