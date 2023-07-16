@@ -8,23 +8,30 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ### Project structure
 
-The project is divided into a few crates: the AST, the parser and the executor.
+The project is divided into apps (binaries) and libs (shared code).
 
-#### AST
+#### apps/compiler
 
-Contains the definition of expressions, terms and basically the code structure.
+This is the binary of the compiler itself. Depends on some crates from libs.
 
-#### Parser
+#### libs/corelib
 
-A library for parsing Rusjure code into an AST.
+The library that is linked to the generated LLVM code.
+Linked even for the JIT compilation.
 
-Uses [Pest](https://pest.rs/).
+#### libs/lexer
 
-#### Executor
+Takes string and creates the token tree.
 
-A library for executing and compiling the AST.
+Uses [Pest](https://pest.rs/) library, which allows to do so via a definition of grammar (the PEG format).
 
-Uses [LLVM](https://llvm.org/).
+#### libs/parser
+
+The purpose of this crate is to take the token tree and JIT-it, then produce a structure to be compile down to binary.
+
+#### libs/tokens
+
+Contains just the definition of the tokens, the token tree and the token stream.
 
 ## License
 
