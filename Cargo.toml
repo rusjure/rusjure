@@ -2,6 +2,7 @@
 
 members = [
     "apps/compiler",
+    "libs/corelib",
     "libs/lexer",
     "libs/parser",
     "libs/tokens",
