@@ -1,3 +1,1 @@
-(defn foo
-  (print_hello_world))
-(foo)
+(print_hello_world)
